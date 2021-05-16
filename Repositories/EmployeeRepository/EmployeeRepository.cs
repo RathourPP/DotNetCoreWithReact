@@ -16,14 +16,16 @@ namespace DummyProjectApi.Repositories.EmployeeRepository
             _Context = Context;
         }
 
-        public async void DeleteEmployeeBasicInfo(int Id)
+        public async Task<EmployeeBasicInformation> DeleteEmployeeBasicInfo(int Id)
         {
             var result = await _Context.EmployeeBasicInformation.Where(x => x.Id == Id && x.IsActive == true).FirstOrDefaultAsync();
             if(result!=null)
             {
                 result.IsActive = false;
                 await _Context.SaveChangesAsync();
+                return result;
             }
+            return null;
         }
 
         public async Task<EmployeeBasicInformation> GetEmployeeBasicInforamtionOnId(int Id)
@@ -41,6 +43,16 @@ namespace DummyProjectApi.Repositories.EmployeeRepository
             var result = await _Context.EmployeeBasicInformation.AddAsync(employee);
             await _Context.SaveChangesAsync();
             return result.Entity;
+        }
+
+        public async Task<IEnumerable<EmployeeBasicInformation>> SearchEmployeesBasicInformation(string name)
+        {
+            IQueryable<EmployeeBasicInformation> query = _Context.EmployeeBasicInformation;
+            if(!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(x => x.Name.Contains(name));
+            }
+            return await query.ToListAsync();
         }
 
         public async Task<EmployeeBasicInformation> UpdateBasicInformation(EmployeeBasicInformation employee)
