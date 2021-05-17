@@ -14,7 +14,7 @@ namespace DummyProjectApi.DataContext
 
         }
 
-        public DbSet<EmployeeBasicInformation> EmployeeBasicInformation { get; set; }
+        public DbSet<Registration> EmployeeBasicInformation { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

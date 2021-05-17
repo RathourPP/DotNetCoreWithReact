@@ -1,5 +1,5 @@
 ﻿using DummyProjectApi.BusinessModel.Model;
-using DummyProjectApi.Repositories.EmployeeRepository;
+using DummyProjectApi.Repositories.RegistrationRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -24,7 +24,7 @@ namespace DummyProjectApi.Controllers
         {
             try
             {
-                return Ok(await _employeeRepository.GetEmployeesBasicInformation());
+                return Ok(await _employeeRepository.GetAll());
             }
             catch(Exception)
             {
@@ -33,11 +33,11 @@ namespace DummyProjectApi.Controllers
         }
 
         [HttpGet("{Id:int}")]
-        public async Task<ActionResult<EmployeeBasicInformation>> GetRegistrationDataById(int Id)
+        public async Task<ActionResult<Registration>> GetRegistrationDataById(int Id)
         {
             try
             {
-                var result = await _employeeRepository.GetEmployeeBasicInforamtionOnId(Id);
+                var result = await _employeeRepository.GetById(Id);
                 if(result==null)
                 {
                     return NotFound();
@@ -51,7 +51,7 @@ namespace DummyProjectApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<EmployeeBasicInformation>> RegisterEmployee(EmployeeBasicInformation employee)
+        public async Task<ActionResult<Registration>> Register(Registration employee)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace DummyProjectApi.Controllers
                 {
                     return BadRequest();
                 }
-                var createdEmployee = await _employeeRepository.RegisterEmployee(employee);
+                var createdEmployee = await _employeeRepository.Save(employee);
                 return CreatedAtAction(nameof(GetRegistrationData), new { Id = createdEmployee.Id }, createdEmployee);
             }
             catch (Exception)
@@ -69,7 +69,7 @@ namespace DummyProjectApi.Controllers
         }
 
         [HttpPut("Id:int")]
-        public async Task<ActionResult<EmployeeBasicInformation>> UpdateEmployee(int Id,EmployeeBasicInformation employee)
+        public async Task<ActionResult<Registration>> Update(int Id,Registration employee)
         {
             try
             {
@@ -77,12 +77,12 @@ namespace DummyProjectApi.Controllers
                 {
                     return BadRequest("Id Mismatch");
                 }
-                var updateEmployee = await _employeeRepository.GetEmployeeBasicInforamtionOnId(Id);
+                var updateEmployee = await _employeeRepository.GetById(Id);
                 if(updateEmployee==null)
                 {
                     return NotFound($"Employee with Id {Id} not found");
                 }
-                return await _employeeRepository.UpdateBasicInformation(employee);
+                return await _employeeRepository.Update(employee);
             }
             catch (Exception)
             {
@@ -91,16 +91,16 @@ namespace DummyProjectApi.Controllers
         }
 
         [HttpDelete("Id:int")]
-        public async Task<ActionResult<EmployeeBasicInformation>> DeleteEmployee(int Id)
+        public async Task<ActionResult<Registration>> Delete(int Id)
         {
             try
             {
-                var deleteEmployee = await _employeeRepository.GetEmployeeBasicInforamtionOnId(Id);
+                var deleteEmployee = await _employeeRepository.GetById(Id);
                 if (deleteEmployee == null)
                 {
                     return NotFound($"Employee with Id {Id} not found");
                 }
-                return await _employeeRepository.DeleteEmployeeBasicInfo(Id);
+                return await _employeeRepository.Delete(Id);
             }
             catch (Exception)
             {
@@ -109,11 +109,11 @@ namespace DummyProjectApi.Controllers
         }
 
         [HttpGet("{search}")]
-        public async Task<ActionResult<IEnumerable<EmployeeBasicInformation>>>Search(string name)
+        public async Task<ActionResult<IEnumerable<Registration>>>Search(string name)
         {
             try
             {
-                var q =await _employeeRepository.SearchEmployeesBasicInformation(name);
+                var q =await _employeeRepository.Search(name);
                 if(q.Any())
                 {
                     return Ok(q);

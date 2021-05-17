@@ -1,19 +1,14 @@
-using DummyProjectApi.BusinessModel.Model;
 using DummyProjectApi.DataContext;
-using DummyProjectApi.Repositories.EmployeeRepository;
+using DummyProjectApi.Repositories.RegistrationRepository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
+using System.Reflection;
 
 namespace DummyProjectApi
 {
@@ -32,6 +27,20 @@ namespace DummyProjectApi
             services.AddControllers();
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1",
+                    new Microsoft.OpenApi.Models.OpenApiInfo
+                    {
+                        Title = "Dot Net Core With React Dummy Project",
+                        Description = "Basics Of Dot Net Core",
+                        Version = "v1"
+                    });
+                // To Display Model Description On Swagger
+                var filename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var filepath = Path.Combine(AppContext.BaseDirectory, filename);
+                options.IncludeXmlComments(filepath);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +50,16 @@ namespace DummyProjectApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             app.UseHttpsRedirection();
 
