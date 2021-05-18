@@ -1,5 +1,6 @@
 using DummyProjectApi.DataContext;
 using DummyProjectApi.Repositories.RegistrationRepository;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +42,14 @@ namespace DummyProjectApi
                 var filepath = Path.Combine(AppContext.BaseDirectory, filename);
                 options.IncludeXmlComments(filepath);
             });
+            services.AddHealthChecks()
+                    .AddSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            services.AddHealthChecks();
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(x => x.WithOrigins("https://localhost:44337"));
+                options.AddPolicy("ReactPolicy", x => x.WithOrigins("http://localhost:3000"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,12 +74,25 @@ namespace DummyProjectApi
 
             app.UseRouting();
 
+            app.UseCors();
+
             app.UseAuthorization();
 
+            app.UseHealthChecksUI();
+
             app.UseEndpoints(endpoints =>
-            {
+            { 
                 endpoints.MapControllers();
+
+                endpoints.MapHealthChecks("/", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+               
             });
+
+            app.UseHealthChecksUI();
         }
     }
 }
