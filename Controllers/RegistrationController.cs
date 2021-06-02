@@ -20,6 +20,9 @@ namespace DummyProjectApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult> GetRegistrationData()
         {
             try
@@ -32,12 +35,15 @@ namespace DummyProjectApi.Controllers
             }
         }
 
-        [HttpGet("{Id:int}")]
-        public async Task<ActionResult<Registration>> GetRegistrationDataById(int Id)
+        [HttpGet("{id:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<Registration>> GetRegistrationDataById(int id)
         {
             try
             {
-                var result = await _employeeRepository.GetById(Id);
+                var result = await _employeeRepository.GetById(id);
                 if(result==null)
                 {
                     return NotFound();
@@ -51,7 +57,10 @@ namespace DummyProjectApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Registration>> Register(Registration employee)
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<Registration>> Register([FromBody] Registration employee)
         {
             try
             {
@@ -59,6 +68,9 @@ namespace DummyProjectApi.Controllers
                 {
                     return BadRequest();
                 }
+                employee.CreatedDate = DateTime.UtcNow;
+                employee.UpdatedDate = DateTime.UtcNow;
+                employee.IsActive = true;
                 var createdEmployee = await _employeeRepository.Save(employee);
                 return CreatedAtAction(nameof(GetRegistrationData), new { Id = createdEmployee.Id }, createdEmployee);
             }
@@ -68,19 +80,22 @@ namespace DummyProjectApi.Controllers
             }
         }
 
-        [HttpPut("Id:int")]
-        public async Task<ActionResult<Registration>> Update(int Id,Registration employee)
+        [HttpPut("id:int")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<Registration>> Update(int id,Registration employee)
         {
             try
             {
-                if (Id != employee.Id)
+                if (id != employee.Id)
                 {
                     return BadRequest("Id Mismatch");
                 }
-                var updateEmployee = await _employeeRepository.GetById(Id);
+                var updateEmployee = await _employeeRepository.GetById(id);
                 if(updateEmployee==null)
                 {
-                    return NotFound($"Employee with Id {Id} not found");
+                    return NotFound($"Employee with Id {id} not found");
                 }
                 return await _employeeRepository.Update(employee);
             }
@@ -90,17 +105,20 @@ namespace DummyProjectApi.Controllers
             }
         }
 
-        [HttpDelete("Id:int")]
-        public async Task<ActionResult<Registration>> Delete(int Id)
+        [HttpDelete("id:int")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<Registration>> Delete(int id)
         {
             try
             {
-                var deleteEmployee = await _employeeRepository.GetById(Id);
+                var deleteEmployee = await _employeeRepository.GetById(id);
                 if (deleteEmployee == null)
                 {
-                    return NotFound($"Employee with Id {Id} not found");
+                    return NotFound($"Employee with Id {id} not found");
                 }
-                return await _employeeRepository.Delete(Id);
+                return await _employeeRepository.Delete(id);
             }
             catch (Exception)
             {
@@ -109,6 +127,9 @@ namespace DummyProjectApi.Controllers
         }
 
         [HttpGet("{search}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<IEnumerable<Registration>>>Search(string name)
         {
             try

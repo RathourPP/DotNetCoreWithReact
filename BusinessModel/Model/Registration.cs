@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper.Configuration.Annotations;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DummyProjectApi.BusinessModel.Model

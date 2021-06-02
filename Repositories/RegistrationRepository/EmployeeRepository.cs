@@ -16,9 +16,9 @@ namespace DummyProjectApi.Repositories.RegistrationRepository
             _Context = Context;
         }
 
-        public async Task<Registration> Delete(int Id)
+        public async Task<Registration> Delete(int id)
         {
-            var result = await _Context.EmployeeBasicInformation.Where(x => x.Id == Id && x.IsActive == true).FirstOrDefaultAsync();
+            var result = await _Context.EmployeeBasicInformation.Where(x => x.Id == id && x.IsActive == true).FirstOrDefaultAsync();
             if(result!=null)
             {
                 result.IsActive = false;
@@ -28,9 +28,9 @@ namespace DummyProjectApi.Repositories.RegistrationRepository
             return null;
         }
 
-        public async Task<Registration> GetById(int Id)
+        public async Task<Registration> GetById(int id)
         {
-            return await _Context.EmployeeBasicInformation.Where(x => x.Id == Id && x.IsActive == false).FirstOrDefaultAsync();
+            return await _Context.EmployeeBasicInformation.Where(x => x.Id == id && x.IsActive == true).FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<Registration>> GetAll()

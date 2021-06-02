@@ -1,4 +1,6 @@
+using Autofac;
 using DummyProjectApi.DataContext;
+using DummyProjectApi.Dependency;
 using DummyProjectApi.Repositories.RegistrationRepository;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
@@ -27,7 +29,6 @@ namespace DummyProjectApi
         {
             services.AddControllers();
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1",
@@ -47,9 +48,15 @@ namespace DummyProjectApi
             services.AddHealthChecks();
             services.AddCors(options =>
             {
-                options.AddDefaultPolicy(x => x.WithOrigins("https://localhost:44337"));
-                options.AddPolicy("ReactPolicy", x => x.WithOrigins("http://localhost:3000"));
+                options.AddDefaultPolicy(x => x.WithOrigins("http://localhost:3000"));
+               // options.AddPolicy("ReactPolicy", x => x.WithOrigins("http://localhost:3000"));
             });
+        }
+
+        // Register Repository Dependencies
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new DependencyRegister(Configuration));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,6 +81,7 @@ namespace DummyProjectApi
 
             app.UseRouting();
 
+            // Use CORS always comes b/w Routing and Autorization
             app.UseCors();
 
             app.UseAuthorization();
@@ -81,7 +89,7 @@ namespace DummyProjectApi
             app.UseHealthChecksUI();
 
             app.UseEndpoints(endpoints =>
-            { 
+            {
                 endpoints.MapControllers();
 
                 endpoints.MapHealthChecks("/", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
