@@ -1,5 +1,5 @@
 ﻿using DummyProjectApi.BusinessModel.Model;
-using DummyProjectApi.Repositories.EmployeeRepository;
+using DummyProjectApi.Repositories.RegistrationRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,11 +20,14 @@ namespace DummyProjectApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult> GetRegistrationData()
         {
             try
             {
-                return Ok(await _employeeRepository.GetEmployeesBasicInformation());
+                return Ok(await _employeeRepository.GetAll());
             }
             catch(Exception)
             {
@@ -32,12 +35,15 @@ namespace DummyProjectApi.Controllers
             }
         }
 
-        [HttpGet("{Id:int}")]
-        public async Task<ActionResult<EmployeeBasicInformation>> GetRegistrationDataById(int Id)
+        [HttpGet("{id:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<Registration>> GetRegistrationDataById(int id)
         {
             try
             {
-                var result = await _employeeRepository.GetEmployeeBasicInforamtionOnId(Id);
+                var result = await _employeeRepository.GetById(id);
                 if(result==null)
                 {
                     return NotFound();
@@ -51,7 +57,10 @@ namespace DummyProjectApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<EmployeeBasicInformation>> RegisterEmployee(EmployeeBasicInformation employee)
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<Registration>> Register([FromBody] Registration employee)
         {
             try
             {
@@ -59,7 +68,10 @@ namespace DummyProjectApi.Controllers
                 {
                     return BadRequest();
                 }
-                var createdEmployee = await _employeeRepository.RegisterEmployee(employee);
+                employee.CreatedDate = DateTime.UtcNow;
+                employee.UpdatedDate = DateTime.UtcNow;
+                employee.IsActive = true;
+                var createdEmployee = await _employeeRepository.Save(employee);
                 return CreatedAtAction(nameof(GetRegistrationData), new { Id = createdEmployee.Id }, createdEmployee);
             }
             catch (Exception)
@@ -68,21 +80,24 @@ namespace DummyProjectApi.Controllers
             }
         }
 
-        [HttpPut("Id:int")]
-        public async Task<ActionResult<EmployeeBasicInformation>> UpdateEmployee(int Id,EmployeeBasicInformation employee)
+        [HttpPut("id:int")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<Registration>> Update(int id,Registration employee)
         {
             try
             {
-                if (Id != employee.Id)
+                if (id != employee.Id)
                 {
                     return BadRequest("Id Mismatch");
                 }
-                var updateEmployee = await _employeeRepository.GetEmployeeBasicInforamtionOnId(Id);
+                var updateEmployee = await _employeeRepository.GetById(id);
                 if(updateEmployee==null)
                 {
-                    return NotFound($"Employee with Id {Id} not found");
+                    return NotFound($"Employee with Id {id} not found");
                 }
-                return await _employeeRepository.UpdateBasicInformation(employee);
+                return await _employeeRepository.Update(employee);
             }
             catch (Exception)
             {
@@ -90,17 +105,20 @@ namespace DummyProjectApi.Controllers
             }
         }
 
-        [HttpDelete("Id:int")]
-        public async Task<ActionResult<EmployeeBasicInformation>> DeleteEmployee(int Id)
+        [HttpDelete("id:int")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<Registration>> Delete(int id)
         {
             try
             {
-                var deleteEmployee = await _employeeRepository.GetEmployeeBasicInforamtionOnId(Id);
+                var deleteEmployee = await _employeeRepository.GetById(id);
                 if (deleteEmployee == null)
                 {
-                    return NotFound($"Employee with Id {Id} not found");
+                    return NotFound($"Employee with Id {id} not found");
                 }
-                return await _employeeRepository.DeleteEmployeeBasicInfo(Id);
+                return await _employeeRepository.Delete(id);
             }
             catch (Exception)
             {
@@ -109,11 +127,14 @@ namespace DummyProjectApi.Controllers
         }
 
         [HttpGet("{search}")]
-        public async Task<ActionResult<IEnumerable<EmployeeBasicInformation>>>Search(string name)
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<IEnumerable<Registration>>>Search(string name)
         {
             try
             {
-                var q =await _employeeRepository.SearchEmployeesBasicInformation(name);
+                var q =await _employeeRepository.Search(name);
                 if(q.Any())
                 {
                     return Ok(q);
