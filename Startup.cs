@@ -46,11 +46,7 @@ namespace DummyProjectApi
             services.AddHealthChecks()
                     .AddSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             services.AddHealthChecks();
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(x => x.WithOrigins("http://localhost:3000"));
-               // options.AddPolicy("ReactPolicy", x => x.WithOrigins("http://localhost:3000"));
-            });
+            services.AddCors();
         }
 
         // Register Repository Dependencies
@@ -82,7 +78,11 @@ namespace DummyProjectApi
             app.UseRouting();
 
             // Use CORS always comes b/w Routing and Autorization
-            app.UseCors();
+            app.UseCors(builder => builder
+                                    .AllowAnyOrigin()
+                                    .AllowAnyMethod()
+                                    .AllowAnyHeader()
+                        );
 
             app.UseAuthorization();
 
@@ -97,7 +97,7 @@ namespace DummyProjectApi
                     Predicate = _ => true,
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
                 });
-               
+
             });
 
             app.UseHealthChecksUI();
