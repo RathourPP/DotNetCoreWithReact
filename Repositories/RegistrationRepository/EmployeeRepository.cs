@@ -11,6 +11,10 @@ namespace DummyProjectApi.Repositories.RegistrationRepository
     public class EmployeeRepository : IEmployeeRepository
     {
         private readonly ApplicationDbContext _Context;
+        /// <summary>
+        /// Resolving Dependency In Constructor
+        /// </summary>
+        /// <param name="Context"></param>
         public EmployeeRepository(ApplicationDbContext Context)
         {
             _Context = Context;

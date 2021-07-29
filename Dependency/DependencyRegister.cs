@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 using DummyProjectApi.Repositories.RegistrationRepository;
+using DummyProjectApi.Repositories.UserTypeRepository;
 using Microsoft.Extensions.Configuration;
 
 namespace DummyProjectApi.Dependency
@@ -19,6 +20,7 @@ namespace DummyProjectApi.Dependency
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<EmployeeRepository>().As<IEmployeeRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<UserTypeRepository>().As<IUserTypeRepository>().InstancePerLifetimeScope();
         }
     }
 }

@@ -8,9 +8,9 @@ namespace DummyProjectApi.Repositories.RegistrationRepository
     {
         Task<IEnumerable<Registration>> Search(string name);
         Task<IEnumerable<Registration>> GetAll();
-        Task<Registration> GetById(int Id);
+        Task<Registration> GetById(int id);
         Task<Registration> Save(Registration employee);
         Task<Registration> Update(Registration employee);
-        Task<Registration> Delete(int Id);
+        Task<Registration> Delete(int id);
     }
 }

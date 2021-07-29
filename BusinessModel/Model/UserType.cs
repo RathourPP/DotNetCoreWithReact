@@ -3,40 +3,39 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DummyProjectApi.BusinessModel.Model
 {
-    [Table("Registration")]
-    public class Registration
+    [Table("UserType")]
+    public class UserType
     {
         /// <summary>
-        /// Id Primary Key
+        /// Id is Primary Key
         /// </summary>
         public int Id { get; set; }
         /// <summary>
-        /// Name Of User
+        /// Name That Defines User
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// Email Of User
+        /// User Is Enum That Defines Types Of User
         /// </summary>
-        public string Email { get; set; }
+        public Types User { get; set; }
         /// <summary>
-        /// Mobile Number Of User
-        /// </summary>
-        public string Mobile { get; set; }
-        /// <summary>
-        /// Password Of User
-        /// </summary>
-        public string Password { get; set; }
-        /// <summary>
-        /// Date Of Creation
+        /// CreatedDate Date Of Creation
         /// </summary>
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         /// <summary>
-        /// Date Of Updation
+        /// UpdatedDate Date Of Modification
         /// </summary>
         public DateTime UpdatedDate { get; set; } = DateTime.UtcNow;
         /// <summary>
-        /// Field To check whether user has been deleted or not
+        /// IsActive Identifies Whether The Record Is Activated or Has Been Deactivated
         /// </summary>
         public bool IsActive { get; set; } = false;
+    }
+
+    public enum Types
+    {
+        Admin=1,
+        Vendor=2,
+        User=3
     }
 }

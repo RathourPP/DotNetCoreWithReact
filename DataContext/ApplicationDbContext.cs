@@ -1,9 +1,5 @@
 ﻿using DummyProjectApi.BusinessModel.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DummyProjectApi.DataContext
 {
@@ -15,6 +11,7 @@ namespace DummyProjectApi.DataContext
         }
 
         public DbSet<Registration> EmployeeBasicInformation { get; set; }
+        public DbSet<UserType> TypeOfUser { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
