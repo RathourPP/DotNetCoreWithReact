@@ -35,7 +35,7 @@ namespace DummyProjectApi.Controllers
             }
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("GetActiveUsersById/{id:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -56,7 +56,7 @@ namespace DummyProjectApi.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("AddNewUser")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -80,7 +80,7 @@ namespace DummyProjectApi.Controllers
             }
         }
 
-        [HttpPut("id:int")]
+        [HttpPut("UpdateExistingUser/{id:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -105,7 +105,7 @@ namespace DummyProjectApi.Controllers
             }
         }
 
-        [HttpDelete("id:int")]
+        [HttpDelete("DeleteExistingUser/{id:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -126,7 +126,7 @@ namespace DummyProjectApi.Controllers
             }
         }
 
-        [HttpGet("{search}")]
+        [HttpGet("SearchActiveUser/{name}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
