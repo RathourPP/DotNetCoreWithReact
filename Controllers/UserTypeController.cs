@@ -1,5 +1,6 @@
 ﻿using DummyProjectApi.BusinessModel.Model;
 using DummyProjectApi.Repositories.UserTypeRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace DummyProjectApi.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class UserTypeController : Controller
@@ -20,6 +22,7 @@ namespace DummyProjectApi.Controllers
             _userTypeRepository = userTypeRepository;
         }
 
+        
         [HttpGet("GetAllActiveUserTypes")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
